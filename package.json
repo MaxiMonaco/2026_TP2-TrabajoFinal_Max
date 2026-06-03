@@ -1,0 +1,29 @@
+{
+  "name": "tp2-trabajogrupal",
+  "version": "1.0.0",
+  "description": "Trabajo grupal TP2 ORT 2026",
+  "homepage": "https://github.com/DaiBGimenez/2026_TP2-TrabajoFinal#readme",
+  "bugs": {
+    "url": "https://github.com/DaiBGimenez/2026_TP2-TrabajoFinal/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DaiBGimenez/2026_TP2-TrabajoFinal.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongodb": "^7.2.0",
+    "morgan": "^1.10.1"
+  }
+}
