@@ -1,4 +1,4 @@
-import { getDb } from "./connection.js";
+import { getDb, connectToDatabase } from "./connection.js";
 import { ObjectId } from "mongodb";
 import bcrypt from "bcrypt";
 
@@ -28,12 +28,13 @@ export async function registerUser({name, email, password}){
 
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
+
     const newUser = {
         name,
         email, 
         password: hashedPassword
     };
-
+    console.log("Nuevo usuario registrado:", newUser);
     const result = await db.collection("users").insertOne(newUser);
     return result;
 }
