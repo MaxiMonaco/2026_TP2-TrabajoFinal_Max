@@ -36,6 +36,20 @@ export async function getById(req, res) {
 // CREATE
 export async function create(req, res) {
     try {
+        const { nombre, categoria, precio, unidadesPorBulto, imagen } = req.body;
+
+        if (!nombre || !categoria || !precio || !unidadesPorBulto || !imagen) {
+            return res.status(400).json({
+                message: "Faltan campos obligatorios"
+            });
+        }
+
+        if (precio && precio <= 0) {
+            return res.status(400).json({
+                message: "El precio debe ser mayor a 0"
+                });
+            }
+
         const result = await createProductService(req.body);
 
         res.status(201).json({
@@ -51,15 +65,37 @@ export async function create(req, res) {
 // UPDATE
 export async function update(req, res) {
     try {
-        const result = await updateProductService(req.params.id, req.body);
+        const { nombre, categoria, precio, unidadesPorBulto, imagen } = req.body;
+
+        const hasAtLeastOneField =
+            nombre || categoria || precio || unidadesPorBulto || imagen;
+
+        if (!hasAtLeastOneField) {
+            return res.status(400).json({
+                message: "Debe enviar al menos un campo para actualizar"
+            });
+        }
+
+
+        if (precio && precio <= 0) {
+            return res.status(400).json({
+                message: "El precio debe ser mayor a 0"
+                });
+            }
+
+        const product = await updateProductService(req.params.id, req.body);
 
         res.json({
             message: "Producto actualizado",
-            product: result
+            product
         });
+
     } catch (error) {
-        console.error("Error updating product:", error);
-        res.status(500).json({ message: "Error interno al actualizar producto" });
+        console.error("Error updating product:", error.message);
+
+        res.status(error.status || 500).json({
+            message: error.message
+        });
     }
 }
 
