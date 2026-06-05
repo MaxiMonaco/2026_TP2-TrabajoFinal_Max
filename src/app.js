@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 app.use("/api/users", userRoutes);
-app.use("/api/productRoutes", productRoutes.js);
+app.use("/api/products", productRoutes);
 
 app.get("/", (req, res) => {
     res.send("API funcionando 🚀");
