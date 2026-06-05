@@ -1,59 +1,72 @@
 import { getDb } from "./connection.js";
 import { ObjectId } from "mongodb";
-import bcrypt from "bcrypt";
 
-//falta el filtro por brand
-export function findAllProducts({ page = 1, limit = 10,category, brand } = {}) {
+// GET ALL
+export async function findAllProducts({ page = 1, limit = 10, category, brand } = {}) {
     const db = getDb();
+
     const skip = (page - 1) * limit;
-    const users = await db.collection("products")
-        .find(category ? { categories:category} : {})
+
+    const filter = {};
+    if (category) filter.category = category;
+    if (brand) filter.brand = brand;
+
+    const products = await db.collection("products")
+        .find(filter)
         .skip(skip)
         .limit(limit)
         .toArray();
+
     return products;
 }
 
-export function findProductById(id) {
+// GET BY ID
+export async function findProductById(id) {
     const db = getDb();
-    const product = await db.collection("products").findOne({_id: new ObjectId(id)});
-    return product;
+
+    return await db.collection("products").findOne({
+        _id: new ObjectId(id)
+    });
 }
 
-//modificar la busqueda por id?
-export function insertProduct({id,name, category,brand,cost}) {
+// INSERT
+export async function insertProduct(product) {
     const db = getDb();
-    const existingProduct = await db.collection("product").findOne({id});
-    if(existingProduct) {
-        throw new Error("El producto ya existe");        
-    }
-    const newProduct = { 
-        name,
-        category,
-        brand,
-        cost
-     };
+
+    const newProduct = {
+        ...product
+    };
+
     const result = await db.collection("products").insertOne(newProduct);
+
     return result;
 }
 
-//MODIFICAR
-export function replaceProduct(id, product) {
+// UPDATE (replace)
+export async function replaceProduct(id, product) {
     const db = getDb();
-    const product = await db.collection("products").findOne({_id: new ObjectId(id)});
-    if(!existingProduct) {
-        throw new Error("El producto no existe");        
+
+    const result = await db.collection("products").findOneAndUpdate(
+        { _id: new ObjectId(id) },
+        { $set: product },
+        { returnDocument: "after" }
+    );
+
+    // 🔥 FIX REAL: usar result.matchedCount + result.value
+    if (result.matchedCount === 0) {
+        return null;
     }
-    //////
-    //mockProducts[index] = { id, ...product };
-    /////
-    return product;
+
+    return result.value;
 }
 
-//MODIFICAR
-export function removeProduct(id) {
-    const index = mockProducts.findIndex(p => p.id === id);
-    if (index === -1) return false;
-    mockProducts.splice(index, 1);
-    return true;
+// DELETE
+export async function removeProduct(id) {
+    const db = getDb();
+
+    const result = await db.collection("products").deleteOne({
+        _id: new ObjectId(id)
+    });
+
+    return result.deletedCount > 0;
 }
