@@ -46,20 +46,23 @@ export async function insertProduct(product) {
 export async function replaceProduct(id, product) {
     const db = getDb();
 
-    const result = await db.collection("products").findOneAndUpdate(
-        { _id: new ObjectId(id) },
-        { $set: product },
-        { returnDocument: "after" }
-    );
+    const existingProduct = await db.collection("products").findOne({
+        _id: new ObjectId(id)
+    });
 
-    // 🔥 FIX REAL: usar result.matchedCount + result.value
-    if (result.matchedCount === 0) {
+    if (!existingProduct) {
         return null;
     }
 
-    return result.value;
-}
+    await db.collection("products").updateOne(
+        { _id: new ObjectId(id) },
+        { $set: product }
+    );
 
+    return await db.collection("products").findOne({
+        _id: new ObjectId(id)
+    });
+}
 // DELETE
 export async function removeProduct(id) {
     const db = getDb();
