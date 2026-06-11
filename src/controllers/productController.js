@@ -38,17 +38,23 @@ export async function create(req, res) {
     try {
         const { nombre, categoria, precio, unidadesPorBulto, imagen } = req.body;
 
-        if (!nombre || !categoria || !precio || !unidadesPorBulto || !imagen) {
+        if (!nombre || !categoria || precio === undefined || unidadesPorBulto === undefined || !imagen) {
             return res.status(400).json({
                 message: "Faltan campos obligatorios"
             });
         }
 
-        if (precio && precio <= 0) {
-            return res.status(400).json({
-                message: "El precio debe ser mayor a 0"
-                });
-            }
+if (precio !== undefined && precio <= 0) {
+    return res.status(400).json({
+        message: "El precio debe ser mayor a 0"
+    });
+}
+
+if (unidadesPorBulto !== undefined && unidadesPorBulto <= 0) {
+    return res.status(400).json({
+        message: "Las unidades por bulto deben ser mayores a 0"
+    });
+}
 
         const result = await createProductService(req.body);
 
@@ -77,11 +83,17 @@ export async function update(req, res) {
         }
 
 
-        if (precio && precio <= 0) {
-            return res.status(400).json({
-                message: "El precio debe ser mayor a 0"
-                });
-            }
+if (precio !== undefined && precio <= 0) {
+    return res.status(400).json({
+        message: "El precio debe ser mayor a 0"
+    });
+}
+
+if (unidadesPorBulto !== undefined && unidadesPorBulto <= 0) {
+    return res.status(400).json({
+        message: "Las unidades por bulto deben ser mayores a 0"
+    });
+}
 
         const product = await updateProductService(req.params.id, req.body);
 
