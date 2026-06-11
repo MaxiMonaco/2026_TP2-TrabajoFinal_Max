@@ -47,6 +47,7 @@ export async function create(req, res) {
 if (precio !== undefined && precio <= 0) {
     return res.status(400).json({
         message: "El precio debe ser mayor a 0"
+
     });
 }
 
@@ -59,7 +60,7 @@ if (unidadesPorBulto !== undefined && unidadesPorBulto <= 0) {
         const result = await createProductService(req.body);
 
         res.status(201).json({
-            message: "Producto creado exitosamente",
+            message: "El producto se ha creado exitosamente",
             productId: result.insertedId
         });
     } catch (error) {
