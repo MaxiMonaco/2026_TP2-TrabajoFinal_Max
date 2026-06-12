@@ -31,8 +31,10 @@ export async function registerUser({name, email, password}){
 
     const newUser = {
         name,
-        email, 
+        email,
+        role : "user", 
         password: hashedPassword
+
     };
     console.log("Nuevo usuario registrado:", newUser);
     const result = await db.collection("users").insertOne(newUser);
