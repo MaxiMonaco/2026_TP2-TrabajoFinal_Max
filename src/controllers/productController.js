@@ -84,17 +84,17 @@ export async function update(req, res) {
         }
 
 
-if (precio !== undefined && precio <= 0) {
-    return res.status(400).json({
-        message: "El precio debe ser mayor a 0"
-    });
-}
+        if (precio !== undefined && precio <= 0) {
+            return res.status(400).json({
+                message: "El precio debe ser mayor a 0"
+            });
+        }
 
-if (unidadesPorBulto !== undefined && unidadesPorBulto <= 0) {
-    return res.status(400).json({
-        message: "Las unidades por bulto deben ser mayores a 0"
-    });
-}
+        if (unidadesPorBulto !== undefined && unidadesPorBulto <= 0) {
+            return res.status(400).json({
+                message: "Las unidades por bulto deben ser mayores a 0"
+            });
+        }
 
         const product = await updateProductService(req.params.id, req.body);
 
