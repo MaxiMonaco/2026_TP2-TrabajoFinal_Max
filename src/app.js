@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from 'dotenv';
 import userRoutes from "./routes/userRoutes.js";
 import productRoutes from "./routes/productRoutes.js"
+import cartRoutes from "./routes/cartRoutes.js";
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(morgan("dev"));
 
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/cart", cartRoutes);
 
 app.get("/", (req, res) => {
     res.send("API funcionando 🚀");
