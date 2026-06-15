@@ -74,8 +74,12 @@ export async function update(req, res) {
     try {
         const { nombre, categoria, precio, unidadesPorBulto, imagen } = req.body;
 
-        const hasAtLeastOneField =
-            nombre || categoria || precio || unidadesPorBulto || imagen;
+const hasAtLeastOneField =
+    nombre !== undefined ||
+    categoria !== undefined ||
+    precio !== undefined ||
+    unidadesPorBulto !== undefined ||
+    imagen !== undefined;
 
         if (!hasAtLeastOneField) {
             return res.status(400).json({
