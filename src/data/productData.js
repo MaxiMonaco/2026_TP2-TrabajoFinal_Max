@@ -2,14 +2,16 @@ import { getDb } from "./connection.js";
 import { ObjectId } from "mongodb";
 
 // GET ALL
-export async function findAllProducts({ page = 1, limit = 10, category, brand } = {}) {
+export async function findAllProducts({ page = 1, limit = 10, category } = {}) {
     const db = getDb();
 
     const skip = (page - 1) * limit;
 
     const filter = {};
-    if (category) filter.category = category;
-    if (brand) filter.brand = brand;
+    if (category){
+        filter.categoria = category;
+    } 
+
 
     const products = await db.collection("products")
         .find(filter)
