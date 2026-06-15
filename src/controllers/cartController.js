@@ -2,7 +2,8 @@ import {
     getCartService,
     addProductToCart,
     removeProductFromCart,
-    clearUserCart
+    clearUserCart,
+    checkoutService
 } from "../services/cartServices.js";
 
 
@@ -124,6 +125,25 @@ export async function clear(req,res){
     }catch(error){
 
         res.status(500).json({
+            message:error.message
+        });
+    }
+}
+
+
+export async function checkout(req,res){
+
+    try {
+
+        const userId = req.user._id;
+
+        const result = await checkoutService(userId);
+
+        res.json(result);
+
+    } catch(error){
+
+        res.status(400).json({
             message:error.message
         });
     }

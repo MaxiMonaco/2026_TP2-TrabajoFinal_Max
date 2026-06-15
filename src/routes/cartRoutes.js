@@ -3,7 +3,8 @@ import {
     getCart,
     addProduct,
     removeProduct,
-    clear
+    clear,
+    checkout
 } from "../controllers/cartController.js";
 
 import { authMiddleware } from "../middleware/authMiddleware.js";
@@ -38,6 +39,8 @@ router.delete(
     authMiddleware,
     clear
 );
+
+router.post("/checkout", authMiddleware, checkout);
 
 
 

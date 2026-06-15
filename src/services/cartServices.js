@@ -122,14 +122,47 @@ export async function removeProductFromCart(userId, productId){
 
     const cart = await findCartByUser(userId);
 
+
     if(!cart){
         throw new Error("Carrito inexistente");
     }
 
 
-    const newItems = cart.items.filter(
-        item => item.productId.toString() !== productId
+    const item = cart.items.find(
+        i => i.productId.toString() === productId
     );
+
+
+    if(!item){
+        throw new Error("Producto no está en el carrito");
+    }
+
+
+    // resta un bulto
+    item.bultos -= 1;
+
+
+    let newItems = cart.items;
+
+
+    // si llegó a 0, lo sacamos
+    if(item.bultos === 0){
+
+        newItems = cart.items.filter(
+            i => i.productId.toString() !== productId
+        );
+
+    } else {
+
+
+        item.unidadesTotales =
+            item.bultos * item.unidadesPorBulto;
+
+
+        item.subtotal =
+            item.unidadesTotales * item.precioUnidad;
+    }
+
 
 
     const total = newItems.reduce(
@@ -159,5 +192,50 @@ export async function clearUserCart(userId){
 
     return {
         message:"Carrito vaciado"
+    };
+}
+
+
+export async function checkoutService(userId){
+
+    const cart = await findCartByUser(userId);
+
+
+    if(!cart){
+        throw new Error("No existe carrito");
+    }
+
+
+    if(cart.items.length === 0){
+        throw new Error("El carrito está vacío");
+    }
+
+
+    const resumen = cart.items.map(item => {
+
+        return {
+            producto: item.nombre,
+            bultos: item.bultos,
+            unidades: item.unidades,
+            subtotal: item.subtotal
+        };
+
+    });
+
+
+    const total = cart.total;
+
+
+    await updateCart(
+        userId,
+        [],
+        0
+    );
+
+
+    return {
+        message:"Compra realizada exitosamente",
+        productos: resumen,
+        total
     };
 }
