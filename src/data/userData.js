@@ -54,3 +54,37 @@ export async function findByCredentials(email, password){
     }
     return user;
 }
+
+export async function deleteUserFromDB(id) {
+    const db = getDb();
+    
+    const result = await db.collection("users").deleteOne({ _id: new ObjectId(id) });
+    
+    return result.deletedCount > 0;
+}
+
+export async function registerAdmin({name, email, password}){
+    const db = getDb();
+    
+    const existingUser = await db.collection("users").findOne({email});
+    if(existingUser) {
+        throw new Error("El email ya esta registrado");        
+    }
+
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const role = "admin";
+
+    const newAdmin = {
+        name,
+        email, 
+        password: hashedPassword,
+        role
+    };
+
+    console.log("Nuevo administrador registrado:", newAdmin);
+    
+    const result = await db.collection("users").insertOne(newAdmin);
+    return result;
+}
