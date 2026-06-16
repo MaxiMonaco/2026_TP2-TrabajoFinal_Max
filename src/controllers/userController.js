@@ -1,4 +1,4 @@
-import { getUsers, getUserByID, registerUserService, loginUserService } from "../services/userServices.js";
+import { getUsers, getUserByID, registerUserService, loginUserService,deleteUserService, registerAdminService  } from "../services/userServices.js";
 import jwt from "jsonwebtoken";
 
 export async function getAllUsers(req, res){
@@ -69,5 +69,50 @@ export async function loginUserController(req, res) {
         }
         console.error("Error en login: ", error);
         res.status(500).json({message: "Error interno en login"});
+    }
+}
+
+export async function deleteUserController(req, res) {
+    const { id } = req.params;
+    try {
+        const userToDelete = await getUserByID(id);
+        
+        if (!userToDelete) {
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+
+        if (userToDelete.role === "admin") {
+            return res.status(403).json({ 
+                message: "Acceso denegado. Un administrador no puede eliminar a otro administrador." 
+            });
+        }
+
+        const result = await deleteUserService(id);
+        res.json({ message: `Usuario ${userToDelete.name} eliminado exitosamente` });
+        
+    } catch (error) {
+        console.error("Error eliminando usuario: ", error);
+        res.status(500).json({ message: "Error interno al eliminar usuario" });
+    }
+}
+
+export async function registerAdminController(req, res) {
+    const { name, email, password } = req.body;
+    
+    
+    if (!name || !email || !password) {
+        return res.status(400).json({ message: "Faltan campos obligatorios (name, email, password)" });
+    }
+
+    try {
+        const result = await registerAdminService({ name, email, password });
+        res.status(201).json({ message: "Administrador registrado exitosamente", userId: result.insertedId });
+    } catch (error) {
+        
+        if (error.message === "El email ya esta registrado") {
+            return res.status(409).json({ message: error.message });
+        }
+        console.error("Error registrando administrador: ", error);
+        res.status(500).json({ message: "Error interno al registrar administrador" });
     }
 }
