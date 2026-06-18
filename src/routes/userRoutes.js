@@ -13,7 +13,7 @@ import { adminMiddleware } from "../middleware/adminMiddleware.js";
 const router = express.Router();
 
 router.get("/", authMiddleware, adminMiddleware, getAllUsers);
-router.get("/:id", getUser);
+router.get("/:id", authMiddleware, adminMiddleware, getUser);
 router.post("/register", registerUserController);
 router.post("/login", loginUserController);
 router.delete("/:id", authMiddleware, adminMiddleware, deleteUserController);
