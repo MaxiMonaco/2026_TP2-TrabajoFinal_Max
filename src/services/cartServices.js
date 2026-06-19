@@ -7,6 +7,7 @@ import {
 } from "../data/cartData.js";
 
 import { findProductById } from "../data/productData.js";
+import { createOrderService } from "./orderServices.js";
 
 
 export async function getCartService(userId){
@@ -196,7 +197,8 @@ export async function clearUserCart(userId){
 }
 
 
-export async function checkoutService(userId){
+export async function checkoutService(userId,user){
+
 
     const cart = await findCartByUser(userId);
 
@@ -211,19 +213,11 @@ export async function checkoutService(userId){
     }
 
 
-    const resumen = cart.items.map(item => {
-
-        return {
-            producto: item.nombre,
-            bultos: item.bultos,
-            unidades: item.unidades,
-            subtotal: item.subtotal
-        };
-
-    });
-
-
-    const total = cart.total;
+    const order =
+        await createOrderService(
+            user,
+            cart
+        );
 
 
     await updateCart(
@@ -235,7 +229,8 @@ export async function checkoutService(userId){
 
     return {
         message:"Compra realizada exitosamente",
-        productos: resumen,
-        total
+        orderId:order.insertedId,
+        total:cart.total
     };
+
 }

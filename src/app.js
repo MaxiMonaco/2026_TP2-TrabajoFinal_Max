@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import userRoutes from "./routes/userRoutes.js";
 import productRoutes from "./routes/productRoutes.js"
 import cartRoutes from "./routes/cartRoutes.js";
-import ordersRoutes from "./routes/ordersRoutes.js"
+import orderRoutes from "./routes/orderRoutes.js"
 
 const app = express();
 
@@ -16,7 +16,7 @@ app.use(morgan("dev"));
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
-app.use("/api/orders", ordersRoutes);
+app.use("/api/orders", orderRoutes);
 
 
 app.get("/", (req, res) => {
