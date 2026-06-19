@@ -26,7 +26,7 @@ router.get(
     authMiddleware,
     getOrder
 );
-
+ 
 
 router.put(
     "/:id/",
@@ -45,5 +45,5 @@ router.delete(
 );
 
 
- 
+
 export default router;
