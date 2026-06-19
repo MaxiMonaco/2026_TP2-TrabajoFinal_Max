@@ -3,7 +3,8 @@ import {
     findOrdersByUser,
     findAllOrders,
     updateOrderStatus,
-    deleteOrder
+    deleteOrder,
+    findOrderById
 } from "../data/orderData.js";
 import { ObjectId } from "mongodb";
 
@@ -32,7 +33,11 @@ export async function createOrderService(user, cart){
     return await createOrder(order);
 }
 
+export async function getOrderById(id){
 
+    return await findOrderById(id);
+
+}
 
 export async function getMyOrders(userId){
 

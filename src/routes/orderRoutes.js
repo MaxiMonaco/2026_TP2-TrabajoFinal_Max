@@ -1,9 +1,9 @@
 import express from "express";
 
 import {
-    myOrders,
-    allOrders,
-    updateStatus,
+    getOrders,
+    getOrder,
+    updateOrder,
     deleteOrderController
 } from "../controllers/orderController.js";
 
@@ -18,25 +18,21 @@ const router = express.Router();
 router.get(
     "/",
     authMiddleware,
-    myOrders
+    getOrders
 );
-
-
 
 router.get(
-    "/all",
+    "/:id",
     authMiddleware,
-    adminMiddleware,
-    allOrders
+    getOrder
 );
-
 
 
 router.put(
-    "/:id/status",
+    "/:id/",
     authMiddleware,
     adminMiddleware,
-    updateStatus
+    updateOrder
 );
 
 

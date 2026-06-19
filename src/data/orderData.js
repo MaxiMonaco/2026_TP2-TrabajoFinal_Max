@@ -9,6 +9,16 @@ export async function createOrder(order){
     return await db.collection("orders")
         .insertOne(order);
 }
+
+export async function findOrderById(id){
+
+    const db = getDb();
+
+    return await db.collection("orders")
+        .findOne({
+            _id: new ObjectId(id)
+        });
+}
  
 
 export async function findOrdersByUser(userId){

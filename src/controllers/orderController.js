@@ -2,17 +2,68 @@ import {
     getMyOrders,
     getAllOrders,
     changeOrderStatus,
-    removeOrder
+    removeOrder,
+    getOrderById
 } from "../services/orderServices.js";
 
- 
- 
-export async function myOrders(req,res){
+
+export async function getOrder(req,res){
 
     try{
 
-        const orders =
-            await getMyOrders(req.user._id);
+        const order = await getOrderById(req.params.id);
+
+
+        if(!order){
+            return res.status(404).json({
+                message:"Orden no encontrada"
+            });
+        }
+
+
+        // admin puede ver cualquiera
+        if(req.user.role === "admin"){
+            return res.json(order);
+        }
+
+
+        // usuario dueño
+        if(order.userId.toString() !== req.user._id.toString()){
+
+            return res.status(403).json({
+                message:"No tenés permiso para ver esta orden"
+            });
+        }
+
+
+        res.json(order);
+
+
+    }catch(error){
+
+        res.status(500).json({
+            message:error.message
+        });
+    }
+}
+
+
+export async function getOrders(req,res){
+
+    try{
+
+        let orders;
+
+        if(req.user.role === "admin"){
+
+            orders = await getAllOrders();
+
+        } else {
+
+            orders = await getMyOrders(req.user._id);
+
+        }
+
 
         res.json(orders);
 
@@ -28,27 +79,11 @@ export async function myOrders(req,res){
 
 
 
-export async function allOrders(req,res){
-
-    try{
-
-        const orders =
-            await getAllOrders();
-
-        res.json(orders);
-
-    }catch(error){
-
-        res.status(500).json({
-            message:error.message
-        });
-    }
-}
 
 
 
 
-export async function updateStatus(req,res){
+export async function updateOrder(req,res){
 
     try{
 
@@ -62,7 +97,7 @@ export async function updateStatus(req,res){
 
 
         res.json({
-            message:"Estado actualizado"
+            message:"Orden actualizada"
         });
 
 
