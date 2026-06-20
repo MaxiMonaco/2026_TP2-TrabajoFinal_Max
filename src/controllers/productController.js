@@ -9,7 +9,12 @@ import {
 // GET ALL
 export async function getAll(req, res) {
     try {
-        const data = await getProducts(req.query);
+        // page/limit llegan como strings desde req.query; MongoDB exige enteros
+        // en skip()/limit(). Parseamos igual que getAllUsers.
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const { category } = req.query;
+        const data = await getProducts({ page, limit, category });
         res.json(data);
     } catch (error) {
         console.error("Error fetching products:", error);

@@ -137,7 +137,10 @@ export async function checkout(req,res){
 
         const userId = req.user._id;
 
-        const result = await checkoutService(userId);
+        const result = await checkoutService(
+        userId,
+        req.user
+    );
 
         res.json(result);
 
