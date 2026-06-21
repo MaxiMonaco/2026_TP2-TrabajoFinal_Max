@@ -8,7 +8,7 @@ import {
     updateOrder
 } from "../data/orderData.js";
 import { ObjectId } from "mongodb";
-
+import { findProductById } from "../data/productData.js";
 
 export async function createOrderService(user, cart){
 
@@ -91,16 +91,71 @@ export async function editOrderService(id, items){
     }
 
 
-    const total = items.reduce(
-        (acc,item)=> acc + item.subtotal,
-        0
-    );
+    const nuevosItems = [];
+
+
+    for(const item of items){
+
+        const product = await findProductById(
+            item.productId
+        );
+
+
+        if(!product){
+            throw new Error(
+                "Producto no encontrado"
+            );
+        }
+
+
+        const unidadesTotales =
+            item.bultos * product.unidadesPorBulto;
+
+
+        const subtotal =
+            unidadesTotales * product.precio;
+
+
+
+        nuevosItems.push({
+
+            productId: product._id,
+
+            nombre: product.nombre,
+
+            bultos:item.bultos,
+
+            unidadesPorBulto:
+                product.unidadesPorBulto,
+
+            unidadesTotales,
+
+            precioUnidad:
+                product.precio,
+
+            subtotal,
+
+            ...(item.detalle && {
+                detalle:item.detalle
+            })
+
+        });
+    }
+
+
+
+    const total =
+        nuevosItems.reduce(
+            (acc,item)=>acc + item.subtotal,
+            0
+        );
+
 
 
     return await updateOrder(
         id,
         {
-            items,
+            items:nuevosItems,
             total
         }
     );

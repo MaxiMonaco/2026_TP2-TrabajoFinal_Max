@@ -1,4 +1,4 @@
-import { getUsers, getUserByID, registerUserService, loginUserService,deleteUserService, registerAdminService  } from "../services/userServices.js";
+import { getUsers, getUserByID, registerUserService, loginUserService,deleteUserService, registerAdminService, updateUserService  } from "../services/userServices.js";
 import jwt from "jsonwebtoken";
 
 export async function getAllUsers(req, res){
@@ -145,5 +145,32 @@ export async function registerAdminController(req, res) {
         }
         console.error("Error registrando administrador: ", error);
         res.status(500).json({ message: "Error interno al registrar administrador" });
+    }
+}
+export async function updateUserController(req, res){
+
+    try {
+
+        const targetUserId = req.params.id;
+
+        const isAdmin = req.user.role === "admin";
+        const isOwner = req.user._id.toString() === targetUserId;
+
+        if(!isAdmin && !isOwner){
+            return res.status(403).json({
+                message: "No tenés permisos"
+            });
+        }
+
+        await updateUserService(targetUserId, req.body);
+
+        res.json({
+            message: "Usuario actualizado"
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        });
     }
 }

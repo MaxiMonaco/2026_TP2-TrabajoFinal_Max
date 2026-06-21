@@ -88,3 +88,14 @@ export async function registerAdmin({name, email, password}){
     const result = await db.collection("users").insertOne(newAdmin);
     return result;
 }
+
+export async function updateUserById(id, data){
+    const db = getDb();
+
+    return await db.collection("users").updateOne(
+        { _id: new ObjectId(id) },
+        {
+            $set: data
+        }
+    );
+}
