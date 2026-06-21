@@ -40,7 +40,8 @@ export async function addProduct(req,res){
 
         const {
             productId,
-            bultos
+            bultos,
+            detalle
         } = req.body;
 
 
@@ -63,7 +64,8 @@ if(bultos <= 0){
             await addProductToCart(
                 userId,
                 productId,
-                bultos
+                bultos,
+                detalle
             );
 
 

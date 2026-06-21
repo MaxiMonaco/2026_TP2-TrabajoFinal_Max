@@ -15,14 +15,45 @@ export async function getAllUsers(req, res){
 
 export async function getUser(req, res) {
     try {
-        const user = await getUserByID(req.params.id);
-        if(!user){
-            return res.status(404).json({message: "Usuario no encontrado"});
+
+        const requestedId = req.params.id;
+
+        const loggedUser = req.user;
+
+
+        const isAdmin = loggedUser.role === "admin";
+
+        const isOwner =
+            loggedUser._id.toString() === requestedId;
+
+
+        if(!isAdmin && !isOwner){
+            return res.status(403).json({
+                message:"No tiene permisos para ver este usuario"
+            });
         }
+
+
+        const user = await getUserByID(requestedId);
+
+
+        if(!user){
+            return res.status(404).json({
+                message:"Usuario no encontrado"
+            });
+        }
+
+
         res.json(user);
+
+
     } catch (error) {
+
         console.error("Error fetching users: ", error);
-        res.status(500).json({message: "Internal server error"});
+
+        res.status(500).json({
+            message:"Internal server error"
+        });
     }
 }
 

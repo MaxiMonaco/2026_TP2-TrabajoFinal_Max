@@ -4,7 +4,9 @@ import {
     getOrders,
     getOrder,
     updateOrder,
-    deleteOrderController
+    cancelOrder,
+    deleteOrderController,
+    editOrder
 } from "../controllers/orderController.js";
 
 import { authMiddleware } from "../middleware/authMiddleware.js";
@@ -26,13 +28,25 @@ router.get(
     authMiddleware,
     getOrder
 );
- 
 
 router.put(
-    "/:id/",
+    "/:id",
+    authMiddleware,
+    adminMiddleware,
+    editOrder
+);
+
+router.put(
+    "/:id/status",
     authMiddleware,
     adminMiddleware,
     updateOrder
+);
+
+router.put(
+    "/:id/cancel",
+    authMiddleware,
+    cancelOrder
 );
 
 

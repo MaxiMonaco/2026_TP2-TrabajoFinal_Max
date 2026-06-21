@@ -60,6 +60,20 @@ export async function updateOrderStatus(id, estado){
         );
 }
 
+export async function updateOrder(id, data){
+
+    const db = getDb();
+
+    return await db.collection("orders")
+        .updateOne(
+            {
+                _id:new ObjectId(id)
+            },
+            {
+                $set:data
+            }
+        );
+}
 
 export async function deleteOrder(id){
 

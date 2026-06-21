@@ -25,7 +25,7 @@ export async function getCartService(userId){
 }
 
 
-export async function addProductToCart(userId, productId, bultos){
+export async function addProductToCart(userId, productId, bultos, detalle){
 
     let cart = await findCartByUser(userId);
 
@@ -63,6 +63,10 @@ export async function addProductToCart(userId, productId, bultos){
         existingItem.subtotal =
             existingItem.unidadesTotales * product.precio;
 
+        if(detalle !== undefined){
+        existingItem.detalle = detalle;
+        }        
+
     } else {
 
 
@@ -89,7 +93,9 @@ export async function addProductToCart(userId, productId, bultos){
 
             precioUnidad: product.precio,
 
-            subtotal
+            subtotal,
+            
+            detalle: detalle || null
         };
 
 
