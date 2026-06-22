@@ -58,13 +58,13 @@ export async function getUser(req, res) {
 }
 
 export async function registerUserController(req, res){
-    const {name, email, password} = req.body;
+    const {name, email, password, telefono, direccion} = req.body;
     if(!name || !email || !password) {
         return res.status(400).json({message: "Faltan campos obligatorios (name, email, password)"});
     }
 
     try {
-        const result = await registerUserService({name, email, password});
+        const result = await registerUserService({name, email, password, telefono, direccion});
         res.status(201).json({message: "Usuario registrado exitosamente", userId: result.insertedId});
     } catch (error) {
         if(error.message === "El email ya esta registrado"){

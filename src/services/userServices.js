@@ -8,9 +8,9 @@ export async function getUserByID(id){
     return await findUserById(id);
 }
 
-export async function registerUserService({name, email, password}){
+export async function registerUserService({name, email, password, telefono, direccion}){
     try {
-       return await registerUser({name, email, password});
+       return await registerUser({name, email, password, telefono, direccion});
     } catch (error) {
         if(error.message === "El email ya esta registrado"){
             throw error;            

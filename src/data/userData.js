@@ -19,7 +19,7 @@ export async function findUserById(id) {
     return user;
 }
 
-export async function registerUser({name, email, password}){
+export async function registerUser({name, email, password, telefono, direccion}){
     const db = getDb();
     const existingUser = await db.collection("users").findOne({email});
     if(existingUser) {
@@ -31,12 +31,21 @@ export async function registerUser({name, email, password}){
 
     const role = "user";
 
-    const newUser = {
-        name,
-        email, 
-        password: hashedPassword,
-        role
-    };
+const newUser = {
+    name,
+    email, 
+    password: hashedPassword,
+    role
+};
+
+
+if(telefono){
+    newUser.telefono = telefono;
+}
+
+if(direccion){
+    newUser.direccion = direccion;
+}
     console.log("Nuevo usuario registrado:", newUser);
     const result = await db.collection("users").insertOne(newUser);
     return result;
