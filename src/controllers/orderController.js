@@ -3,7 +3,9 @@ import {
     getAllOrders,
     changeOrderStatus,
     removeOrder,
-    getOrderById
+    getOrderById,
+    createOrderService, // NUEVO
+    cancelOrderService
 } from "../services/orderServices.js";
 
 
@@ -129,5 +131,64 @@ export async function deleteOrderController(req,res){
         res.status(500).json({
             message:error.message
         });
+    }
+}
+
+export async function createOrderController(req, res) {
+    try {
+        const cart = req.body; 
+        
+        if (!cart || !cart.items || cart.items.length === 0) {
+            return res.status(400).json({ message: "El carrito no puede estar vacío" });
+        }
+
+        
+        const result = await createOrderService(req.user, cart);
+        
+        res.status(201).json({
+            message: "Orden creada exitosamente",
+            orderId: result.insertedId
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+
+export async function cancelOrderController(req, res) {
+    try {
+        const orderId = req.params.id;
+        const userId = req.user._id; 
+
+        await cancelOrderService({ orderId, userId });
+
+        res.json({ message: "Orden cancelada correctamente" });
+    } catch (error) {
+        
+        if (error.message === "Orden no encontrada") {
+            return res.status(404).json({ message: error.message });
+        }
+        if (error.message === "No tienes permisos para cancelar esta orden" || 
+            error.message === "No se puede cancelar una orden que ya está en camino o finalizada") {
+            return res.status(403).json({ message: error.message });
+        }
+        
+        res.status(500).json({ message: "Error interno al cancelar la orden" });
+    }
+}
+
+export async function getOrdersByUserAdminController(req, res) {
+    try {
+        const { userId } = req.params;
+
+        const orders = await getOrdersByUserService(userId);
+
+        res.json({
+            usuarioId: userId,
+            total_pedidos: orders.length,
+            orders
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 }
