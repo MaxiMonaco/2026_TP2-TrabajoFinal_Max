@@ -48,9 +48,13 @@ export async function getMyOrders(userId){
 
 
 
-export async function getAllOrders(){
+export async function getAllOrders(page, limit, estado){
 
-    return await findAllOrders();
+    return await findAllOrders({
+        page,
+        limit,
+        estado
+    });
 
 }
 

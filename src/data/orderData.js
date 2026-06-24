@@ -33,15 +33,25 @@ export async function findOrdersByUser(userId){
 }
 
 
-export async function findAllOrders(){
+export async function findAllOrders({page = 1, limit = 10, estado} = {}){
 
     const db = getDb();
 
+    const skip = (page - 1) * limit;
+    const filter = {};
+        if(estado){
+        filter.estado = estado;
+    }
+
     return await db.collection("orders")
-        .find()
+        .find(filter)
+        .sort({
+            fecha:-1
+        })
+        .skip(skip)
+        .limit(limit)
         .toArray();
 }
-
 
 export async function updateOrderStatus(id, estado){
 

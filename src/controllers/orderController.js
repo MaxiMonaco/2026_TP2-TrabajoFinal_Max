@@ -58,7 +58,11 @@ export async function getOrders(req,res){
 
         if(req.user.role === "admin"){
 
-            orders = await getAllOrders();
+                const page = parseInt(req.query.page) || 1;
+                const limit = parseInt(req.query.limit) || 10;
+                const estado = req.query.estado;
+
+                orders = await getAllOrders(page, limit, estado);
 
         } else {
 
