@@ -4,31 +4,25 @@ import {
     changeOrderStatus,
     removeOrder,
     getOrderById,
-    createOrderService, // NUEVO
-    cancelOrderService
+    createOrderService, 
+    cancelOrderService,
+    getOrdersByUserService
 } from "../services/orderServices.js";
 
 
 export async function getOrder(req,res){
-
     try{
-
         const order = await getOrderById(req.params.id);
-
 
         if(!order){
             return res.status(404).json({
                 message:"Orden no encontrada"
             });
         }
-
-
         // admin puede ver cualquiera
         if(req.user.role === "admin"){
             return res.json(order);
         }
-
-
         // usuario dueño
         if(order.userId.toString() !== req.user._id.toString()){
 
@@ -36,10 +30,7 @@ export async function getOrder(req,res){
                 message:"No tenés permiso para ver esta orden"
             });
         }
-
-
         res.json(order);
-
 
     }catch(error){
 
