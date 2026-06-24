@@ -215,3 +215,27 @@ export async function removeOrder(id){
     return await deleteOrder(id);
 
 }
+export async function cancelOrderService({ orderId, userId }) {
+    const order = await findOrderById(orderId);
+    
+    if (!order) {
+        throw new Error("Orden no encontrada");
+    }
+
+    // Seguridad: Validamos que el usuario logueado sea realmente el dueño del pedido
+    if (order.userId.toString() !== userId.toString()) {
+        throw new Error("No tienes permisos para cancelar esta orden");
+    }
+
+    // Regla de negocio: Si ya cambió de estado (en camino/finalizado), no se toca
+    if (order.estado !== "EN PREPARACION") {
+        throw new Error("No se puede cancelar una orden que ya está en camino o finalizada");
+    }
+
+    // Si pasa los filtros, reutilizamos la función para pasarla a CANCELADO
+    return await updateOrderStatus(orderId, "CANCELADO");
+}
+
+export async function getOrdersByUserService(userId) {
+    return await findOrdersByUser(userId);
+}
