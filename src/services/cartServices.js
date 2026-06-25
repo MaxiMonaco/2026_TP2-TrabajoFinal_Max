@@ -153,7 +153,7 @@ export async function removeProductFromCart(userId, productId){
 
 
     // si llegó a 0, lo sacamos
-    if(item.bultos === 0){
+    if(item.bultos <= 0){
 
         newItems = cart.items.filter(
             i => i.productId.toString() !== productId
