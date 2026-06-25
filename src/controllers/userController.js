@@ -1,4 +1,4 @@
-import { getUsers, getUserByID, registerUserService, loginUserService,deleteUserService, registerAdminService  } from "../services/userServices.js";
+import { getUsers, getUserByID, registerUserService, loginUserService,deleteUserService, registerAdminService, updateUserService  } from "../services/userServices.js";
 import jwt from "jsonwebtoken";
 
 export async function getAllUsers(req, res){
@@ -15,25 +15,56 @@ export async function getAllUsers(req, res){
 
 export async function getUser(req, res) {
     try {
-        const user = await getUserByID(req.params.id);
-        if(!user){
-            return res.status(404).json({message: "Usuario no encontrado"});
+
+        const requestedId = req.params.id;
+
+        const loggedUser = req.user;
+
+
+        const isAdmin = loggedUser.role === "admin";
+
+        const isOwner =
+            loggedUser._id.toString() === requestedId;
+
+
+        if(!isAdmin && !isOwner){
+            return res.status(403).json({
+                message:"No tiene permisos para ver este usuario"
+            });
         }
+
+
+        const user = await getUserByID(requestedId);
+
+
+        if(!user){
+            return res.status(404).json({
+                message:"Usuario no encontrado"
+            });
+        }
+
+
         res.json(user);
+
+
     } catch (error) {
+
         console.error("Error fetching users: ", error);
-        res.status(500).json({message: "Internal server error"});
+
+        res.status(500).json({
+            message:"Internal server error"
+        });
     }
 }
 
 export async function registerUserController(req, res){
-    const {name, email, password} = req.body;
+    const {name, email, password, telefono, direccion} = req.body;
     if(!name || !email || !password) {
         return res.status(400).json({message: "Faltan campos obligatorios (name, email, password)"});
     }
 
     try {
-        const result = await registerUserService({name, email, password});
+        const result = await registerUserService({name, email, password, telefono, direccion});
         res.status(201).json({message: "Usuario registrado exitosamente", userId: result.insertedId});
     } catch (error) {
         if(error.message === "El email ya esta registrado"){
@@ -114,5 +145,32 @@ export async function registerAdminController(req, res) {
         }
         console.error("Error registrando administrador: ", error);
         res.status(500).json({ message: "Error interno al registrar administrador" });
+    }
+}
+export async function updateUserController(req, res){
+
+    try {
+
+        const targetUserId = req.params.id;
+
+        const isAdmin = req.user.role === "admin";
+        const isOwner = req.user._id.toString() === targetUserId;
+
+        if(!isAdmin && !isOwner){
+            return res.status(403).json({
+                message: "No tenés permisos"
+            });
+        }
+
+        await updateUserService(targetUserId, req.body);
+
+        res.json({
+            message: "Usuario actualizado"
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        });
     }
 }

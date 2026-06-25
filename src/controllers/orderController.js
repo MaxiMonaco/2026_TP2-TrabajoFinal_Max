@@ -49,7 +49,11 @@ export async function getOrders(req,res){
 
         if(req.user.role === "admin"){
 
-            orders = await getAllOrders();
+                const page = parseInt(req.query.page) || 1;
+                const limit = parseInt(req.query.limit) || 10;
+                const estado = req.query.estado;
+
+                orders = await getAllOrders(page, limit, estado);
 
         } else {
 
@@ -71,11 +75,42 @@ export async function getOrders(req,res){
 
 
 
+//para que el admin edite las ordenes de los tontos que hagan pedido mal
+export async function editOrder(req,res){
+
+    try{
+
+        const {items}=req.body;
 
 
+        if(!items){
+            return res.status(400).json({
+                message:"Debe enviar items"
+            });
+        }
 
 
+        await editOrderService(
+            req.params.id,
+            items
+        );
 
+
+        res.json({
+            message:"Orden modificada"
+        });
+
+
+    }catch(error){
+
+        res.status(400).json({
+            message:error.message
+        });
+    }
+}
+
+
+//para que el admin cambie el estado segun avance el pedido
 export async function updateOrder(req,res){
 
     try{
@@ -103,7 +138,28 @@ export async function updateOrder(req,res){
 }
 
 
+export async function cancelOrder(req,res){
 
+    try{
+
+        await cancelOrderService(
+            req.params.id,
+            req.user
+        );
+
+
+        res.json({
+            message:"Orden cancelada"
+        });
+
+
+    }catch(error){
+
+        res.status(400).json({
+            message:error.message
+        });
+    }
+}
 
 export async function deleteOrderController(req,res){
 

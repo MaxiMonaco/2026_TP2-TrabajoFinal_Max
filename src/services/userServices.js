@@ -1,4 +1,4 @@
-import { findAllUsers, findByCredentials, findUserById, registerUser,deleteUserFromDB,registerAdmin } from "../data/userData.js";
+import { findAllUsers, findByCredentials, findUserById, registerUser,deleteUserFromDB,registerAdmin,updateUserById } from "../data/userData.js";
 
 export async function getUsers({ page, limit } = {}){
     return await findAllUsers({ page, limit });
@@ -8,9 +8,9 @@ export async function getUserByID(id){
     return await findUserById(id);
 }
 
-export async function registerUserService({name, email, password}){
+export async function registerUserService({name, email, password, telefono, direccion}){
     try {
-       return await registerUser({name, email, password});
+       return await registerUser({name, email, password, telefono, direccion});
     } catch (error) {
         if(error.message === "El email ya esta registrado"){
             throw error;            
@@ -46,4 +46,14 @@ export async function registerAdminService({name, email, password}){
         }
         throw new Error("Error al registrar el administrador");        
     }
+}
+
+export async function updateUserService(id, data){
+
+    const allowedFields = {
+        telefono: data.telefono,
+        direccion: data.direccion
+    };
+
+    return await updateUserById(id, allowedFields);
 }
