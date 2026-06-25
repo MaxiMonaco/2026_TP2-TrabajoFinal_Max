@@ -137,30 +137,6 @@ export async function updateOrder(req,res){
     }
 }
 
-
-export async function cancelOrder(req,res){
-
-    try{
-
-        await cancelOrderService(
-            req.params.id,
-            req.user
-        );
-
-
-        res.json({
-            message:"Orden cancelada"
-        });
-
-
-    }catch(error){
-
-        res.status(400).json({
-            message:error.message
-        });
-    }
-}
-
 export async function deleteOrderController(req,res){
 
     try{
@@ -180,27 +156,6 @@ export async function deleteOrderController(req,res){
         });
     }
 }
-
-export async function createOrderController(req, res) {
-    try {
-        const cart = req.body; 
-        
-        if (!cart || !cart.items || cart.items.length === 0) {
-            return res.status(400).json({ message: "El carrito no puede estar vacío" });
-        }
-
-        
-        const result = await createOrderService(req.user, cart);
-        
-        res.status(201).json({
-            message: "Orden creada exitosamente",
-            orderId: result.insertedId
-        });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
-
 
 export async function cancelOrderController(req, res) {
     try {
